@@ -1,0 +1,36 @@
+name: Check TikTok verification URL
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test public GitHub Pages and TikTok verification file
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://youlter1234-cmd.github.io/story-pipeline-website"
+          TOKEN="tiktok-developers-site-verification=losHyPHa8p0e1wAeuiArqH60ccPpzvIg"
+          FILE="$BASE/tiktoklosHyPHa8p0e1wAeuiArqH60ccPpzvIg.txt"
+          for i in $(seq 1 10); do
+            echo "Attempt $i of 10:"
+            HTTP="$(curl -L --silent --show-error --output /tmp/verification.txt --write-out '%{http_code}' "$FILE" || true)"
+            echo "Signature URL HTTP status: $HTTP"
+            if [ "$HTTP" = "200" ] && [ "$(tr -d '\r\n' </tmp/verification.txt)" = "$TOKEN" ]; then
+              echo "Signature content matches the TikTok verification file"
+              for route in / /terms.html /privacy.html; do
+                CODE="$(curl -L --silent --show-error --output /dev/null --write-out '%{http_code}' "$BASE$route")"
+                echo "HTTP $CODE for $BASE$route"
+                if [ "$CODE" != "200" ]; then
+                  exit 1
+                fi
+              done
+              echo "SITE CHECK PASSED"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "SITE CHECK FAILED. Signature not publicly reachable or mismatched"
+          exit 1
