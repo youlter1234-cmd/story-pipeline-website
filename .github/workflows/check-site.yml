@@ -12,8 +12,8 @@ jobs:
         run: |
           set -euo pipefail
           BASE="https://youlter1234-cmd.github.io/story-pipeline-website"
-          TOKEN="tiktok-developers-site-verification=losHyPHa8p0e1wAeuiArqH60ccPpzvIg"
-          FILE="$BASE/tiktoklosHyPHa8p0e1wAeuiArqH60ccPpzvIg.txt"
+          TOKEN="tiktok-developers-site-verification=ckPcWAcNkzI3kKVOBOErv6SQgb24tJpv"
+          FILE="$BASE/tiktokckPcWAcNkzI3kKVOBOErv6SQgb24tJpv.txt"
           for i in $(seq 1 10); do
             echo "Attempt $i of 10:"
             HTTP="$(curl -L --silent --show-error --output /tmp/verification.txt --write-out '%{http_code}' "$FILE" || true)"
